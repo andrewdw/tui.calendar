@@ -14,12 +14,16 @@ import type { GridPosition, GridPositionFinder, TimeGridData } from '@t/grid';
 import type { CalendarState } from '@t/store';
 
 const THIRTY_MINUTES = 30;
+const FIVE_MINUTES = 5;
+const FIFTEEN_MINUTES = 15;
+const MS_PER_FIVE_MINUTES = FIVE_MINUTES * 60 * 1000;  // Milliseconds per 5 minutes
+
 
 function getCurrentIndexByTime(time: TZDate, hourStart: number) {
   const hour = time.getHours() - hourStart;
   const minutes = time.getMinutes();
 
-  return hour * 2 + Math.floor(minutes / THIRTY_MINUTES);
+  return hour * 12 + Math.floor(minutes / FIVE_MINUTES);
 }
 
 function getMovingEventPosition({
@@ -37,7 +41,7 @@ function getMovingEventPosition({
 }) {
   const rowHeight = timeGridDataRows[0].height;
   const maxHeight = rowHeight * timeGridDataRows.length;
-  const millisecondsDiff = rowDiff * MS_PER_THIRTY_MINUTES + columnDiff * MS_PER_DAY;
+  const millisecondsDiff = rowDiff * MS_PER_FIVE_MINUTES + columnDiff * MS_PER_DAY;
   const hourStart = Number(timeGridDataRows[0].startTime.split(':')[0]);
 
   const { goingDuration = 0, comingDuration = 0 } = draggingEvent.model;
@@ -126,7 +130,7 @@ export function useTimeGridEventMove({
 
     return addMilliseconds(
       startDateTime,
-      gridDiff.rowDiff * MS_PER_THIRTY_MINUTES + gridDiff.columnDiff * MS_PER_DAY
+      gridDiff.rowDiff * MS_PER_FIVE_MINUTES + gridDiff.columnDiff * MS_PER_DAY
     );
   }, [gridDiff, startDateTime]);
 
